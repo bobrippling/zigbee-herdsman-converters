@@ -42,6 +42,7 @@ import {
     windowCovering,
 } from '../lib/modernExtend';
 import {DefinitionWithExtend} from '../lib/types';
+import tz from '../converters/toZigbee'; 
 
 const definitions: DefinitionWithExtend[] = [
     // #region light
@@ -224,11 +225,13 @@ const definitions: DefinitionWithExtend[] = [
         extend: [addCustomClusterManuSpecificIkeaUnknown(), ikeaLight({colorTemp: true}), identify()],
     },
     {
+        // living room: TRADFRI bulb B22, white spectrum, globe, opal, 1055 lm (LED2035G10)
         zigbeeModel: ['TRADFRIbulbB22WSglobeopal1055lm', 'TRADFRIbulbB22WSglobeopal1055lm'],
         model: 'LED2035G10',
         vendor: 'IKEA',
         description: 'TRADFRI bulb B22, white spectrum, globe, opal, 1055 lm',
         extend: [addCustomClusterManuSpecificIkeaUnknown(), ikeaLight({colorTemp: true}), identify()],
+        toZigbee: [tz.ikea_bulb]
     },
     // #endregion E26/E27/B22
     {
@@ -961,6 +964,44 @@ const definitions: DefinitionWithExtend[] = [
     },
     // #endregion sensors
 ];
+
+/*
+{
+    zigbeeModel: [
+        'TRADFRI bulb E27 CWS opal 600lm',
+        'TRADFRI bulb E26 CWS opal 600lm',
+        'TRADFRI bulb E14 CWS opal 600lm',
+        'TRADFRI bulb E12 CWS opal 600lm',
+        'TRADFRI bulb E27 C/WS opal 600',
+    ],
+    model: 'LED1624G9',
+    description: 'TRADFRI LED bulb E14/E26/E27 600 lumen, dimmable, color, opal white',
+    toZigbee: unfreezeSupport(
+        utils.replaceInArray(tradfriExtend.light_onoff_brightness_colortemp_color().toZigbee, [tz.light_color_colortemp], [tz.light_color_and_colortemp_via_color]),
+        unfreezeMechanisms.genLevelCtrl), // moveColorTemp does not work for this light
+},
+{
+    zigbeeModel: ['TRADFRI bulb E27 WS opal 1000lm', 'TRADFRI bulb E26 WS opal 1000lm'],
+    model: 'LED1732G11',
+    vendor: 'IKEA',
+    description: 'TRADFRI LED bulb E27 1000 lumen, dimmable, white spectrum, opal white',
+    toZigbee: unfreezeSupport(tradfriExtend.light_onoff_brightness_colortemp({ colorTempRange: [250, 454] }).toZigbee, unfreezeMechanisms.genLevelCtrl)
+},
+{
+    zigbeeModel: ['TRADFRI bulb E27 WS opal 980lm', 'TRADFRI bulb E26 WS opal 980lm', 'TRADFRI bulb E27 WS\uFFFDopal 980lm'],
+    model: 'LED1545G12',
+    vendor: 'IKEA',
+    description: 'TRADFRI LED bulb E26/E27 980 lumen, dimmable, white spectrum, opal white',
+    toZigbee: unfreezeSupport(tradfriExtend.light_onoff_brightness_colortemp().toZigbee, unfreezeMechanisms.genLevelCtrl)
+},
+{
+    zigbeeModel: ['TRADFRI bulb GU10 WS 400lm'],
+    model: 'LED1537R6/LED1739R5',
+    vendor: 'IKEA',
+    description: 'TRADFRI LED bulb GU10 400 lumen, dimmable, white spectrum',
+    toZigbee: unfreezeSupport(tradfriExtend.light_onoff_brightness_colortemp().toZigbee, unfreezeMechanisms.genLevelCtrl)
+}
+*/
 
 export default definitions;
 module.exports = definitions;

@@ -483,6 +483,7 @@ export function getTransition(entity: Zh.Endpoint | Zh.Group, key: string, meta:
          * To workaround this we skip the transition for the brightness as it is applied first.
          * https://github.com/Koenkk/zigbee2mqtt/issues/1810
          */
+        // ! this should fix it??
         if (key === 'brightness' && (message.color !== undefined || message.color_temp !== undefined)) {
             return {time: 0, specified: false};
         }

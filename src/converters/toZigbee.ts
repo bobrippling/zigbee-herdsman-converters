@@ -4523,6 +4523,26 @@ const converters3 = {
             return await converters2.light_onoff_brightness.convertSet(entity, key, value, meta);
         },
     } satisfies Tz.Converter,
+    ikea_bulb: {
+        convertSet: async (entity, key, value, meta) => {
+            const {message} = meta;
+
+            // attempts to transition a colour and brightness at the same time fail
+            if ("transition" in message
+                && typeof message.transition === "number"
+                && "brightness" in message
+                && "color_temp" in message
+           ) {
+               const transition = utils.getTransition(entity, 'brightness', meta);
+
+                logger.info("Working around IKEA brightness + temperature change", NS);
+
+
+
+                //await entity.command('genOnOff', 'on', {}, utils.getOptions(meta.mapped, entity));
+            }
+        }
+    } satisfies Tz.Converter,
 };
 
 const converters = {...converters1, ...converters2, ...converters3};

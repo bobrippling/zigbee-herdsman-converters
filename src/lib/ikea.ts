@@ -32,6 +32,9 @@ import {
     replaceToZigbeeConvertersInArray,
 } from '../lib/utils';
 
+// TODO:
+const ota = require('zigbee-herdsman-converters/lib/ota');
+
 export const manufacturerOptions = {manufacturerCode: Zcl.ManufacturerCode.IKEA_OF_SWEDEN};
 
 const bulbOnEvent: OnEvent = async (type, data, device, options, state: KeyValue) => {
@@ -815,3 +818,82 @@ export function addCustomClusterManuSpecificIkeaUnknown(): ModernExtend {
         commandsResponse: {},
     });
 }
+
+/* new -----------------------------------
+
+const unfreezeMechanisms = {
+    // WS lights:
+    //   Aborts the color transition midway: light will stay at the intermediary
+    //   state it was when it received the command.
+    // Color lights:
+    //   Do not support this command.
+    moveColorTemp : function() {
+        this.entity.command(
+            'lightingColorCtrl',
+            'moveColorTemp',
+            { rate: 1, movemode: 0, minimum: 0, maximum: 600 },
+            {}
+        );
+    },
+
+    // WS lights:
+    //   Same as 'moveColorTemp'.
+    // Color lights:
+    //   Finishes the color transition instantly: light will instantly
+    //   "fast forward" to the final state, post-transition.
+    genLevelCtrl : function() {
+        this.entity.command('genLevelCtrl', 'stop', {}, {});
+    }
+};
+
+class UnfreezeSupport {
+    #entity;
+    #unfreeze;
+
+    constructor (entity, mechanism) {
+        this.entity = entity;
+        this.unfreeze = mechanism;
+    }
+
+    willFreeze(clusterKey, commandKey, payload) {
+        return payload
+            // any color command with a transition will freeze the light...
+            && payload.transtime > 0
+            && clusterKey == 'lightingColorCtrl'
+            // ...except for 'stop' commands:
+            && payload.rate != 1
+            && payload.movemode != 0;
+    }
+
+    async command(clusterKey, commandKey, payload, options) {
+        const frozenUtil = globalStore.getValue(this.entity, 'frozenUntil');
+        if (frozenUtil != null) {
+            if(Date.now() <= frozenUtil) {
+                console.log("Light is frozen, will attempt to unfreeze");
+                this.unfreeze();
+            }
+            globalStore.clearValue(this.entity, 'frozenUntil');
+        }
+        const returnValue = await this.entity.command(clusterKey, commandKey, payload, options);
+        if (this.willFreeze(clusterKey, commandKey, payload)) {
+            const millis = payload.transtime * 100;
+            const frozenUntil = Date.now() + millis;
+            globalStore.putValue(this.entity, 'frozenUntil', frozenUntil);
+            console.log("Command", clusterKey + "." + commandKey, payload, options, "will freeze the light until", frozenUntil);
+
+        }
+        return returnValue;
+    }
+}
+
+function unfreezeSupport (converters, mechanism) {
+    const newConverters = new Array();
+    for (const converter of converters) {
+        const newConverter = {
+            ...converter,
+        }
+        newConverters.push(newConverter);
+    }
+    return newConverters;
+}
+*/
