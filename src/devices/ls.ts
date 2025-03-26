@@ -1,15 +1,15 @@
-import * as exposes from '../lib/exposes';
-import * as m from '../lib/modernExtend';
-import {DefinitionWithExtend} from '../lib/types';
+import * as exposes from "../lib/exposes";
+import * as m from "../lib/modernExtend";
+import type {DefinitionWithExtend} from "../lib/types";
 
 const e = exposes.presets;
 
-const definitions: DefinitionWithExtend[] = [
+export const definitions: DefinitionWithExtend[] = [
     {
-        zigbeeModel: ['Emotion'],
-        model: 'A319463',
-        vendor: 'LS Deutschland GmbH',
-        description: 'Home base',
+        zigbeeModel: ["Emotion"],
+        model: "A319463",
+        vendor: "LS Deutschland GmbH",
+        description: "Home base",
         fromZigbee: m.light({colorTemp: {range: [153, 454]}, color: true}).fromZigbee,
         toZigbee: m.light({colorTemp: {range: [153, 454]}, color: true}).toZigbee,
         configure: m.light({colorTemp: {range: [153, 454]}, color: true}).configure[0],
@@ -29,6 +29,3 @@ const definitions: DefinitionWithExtend[] = [
         },
     },
 ];
-
-export default definitions;
-module.exports = definitions;
